@@ -1,6 +1,6 @@
 
 let welcomes = ['Good afternoon,','Good morning,']
-let username = 'Michael'
+let username = 'Kratomasy'
 var nowTime = new Date();
 var lastbackgroundTime = new Date();
 let tick = false;
