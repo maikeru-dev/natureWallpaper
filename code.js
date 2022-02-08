@@ -3,11 +3,30 @@ let welcomes = ['Good afternoon,','Good morning,']
 let username = 'Michael'
 var nowTime = new Date();
 let tick = false;
-function welcometext(text){document.getElementById('maintext').innerText = text}
-function semicolonchange(text){document.getElementById('semicolon').style.visibility = text}
-function timechange(hours,minutes){document.getElementById('hours').innerText = hours;document.getElementById('minutes').innerText = minutes;}
-function background(text){document.getElementById('background-image').style.backgroundImage = text}
+let photos = []
+let apikey = "Bearer 563492ad6f917000010000011c2607a74b374f9f8daf3428ddc31151"
+function changetext(id1, shadowid, text){document.getElementById(id1).innerText = text;document.getElementById(shadowid).innerText = text;}
+function semicolonchange(text){document.getElementById('semicolon').style.visibility = text;document.getElementById('semicolonshadow').style.visibility = text}
+function timechange(hours,minutes){changetext('hours','hoursshadow', hours);changetext('minutes','minutesshadow', minutes)}
+function background(text){document.getElementById('background-image').style.backgroundImage = `url('${text}')`;}
+
+var request = new XMLHttpRequest();
+request.open('GET','https://api.pexels.com/v1/search?query=nature&orientation=landscape&size=medium')
+request.setRequestHeader('Authorization', apikey)
+request.send();
+request.onload = ()=>{
+    photos = JSON.parse(request.response)['photos']
+    let random = Math.round(Math.random() * photos.length)
+    let data = photos.slice(random-1,random)[0]
+    console.log(data, random)
+
+    let image = data.src['original']
+    background(image);
+}
+
+
 checkTime()
+animateclock()
 setInterval(() => {
     animateclock()
 }, 1000);
@@ -29,7 +48,7 @@ function animateclock(){
     
 }
 function formatTime(num){
-    if(num > 10){
+    if(num >= 10){
         return num
     }else {
         return '0'+num
@@ -39,11 +58,9 @@ function checkTime(){
     nowTime = new Date();
     if(nowTime.getHours() >= 12){
         //afternoon
-        welcometext(welcomes[0]+' '+username)
-        background("url('./poppyfield.jpg')")
+        changetext('maintext', 'maintextshadow', welcomes[0]+' '+username)
     } else {
         //morning
-        welcometext(welcomes[1]+' '+username)
-        background("url('./poppyfield.jpg')")
+        changetext('maintext', 'maintextshadow', welcomes[1]+' '+username)
     }
 }
