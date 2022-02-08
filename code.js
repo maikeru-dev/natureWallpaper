@@ -23,8 +23,29 @@ request.onload = ()=>{
     let image = data.src['original']
     background(image);
 }
+(function () {
+    // Add event listener
+    document.addEventListener("mousemove", parallax);
+    const elem = document.querySelector("#background-image");
+    
+    // Magic happens here, kudos to this guy https://codepen.io/oscicen/pen/zyJeJw
+    function parallax(e) {
+        let _w = window.innerWidth / 2;
+        let _h = window.innerHeight / 2;
+        let _mouseX = e.clientX;
+        let _mouseY = e.clientY;
 
+        let xtranvalue = (((_mouseX) - (_w)) * 0.5 / 100)-100;
+        let ytranvalue = (((_mouseY) - (_h)) * 0.5 / 100)-100;
 
+        let imagemove = `translateX(${xtranvalue}px) translateY(${ytranvalue}px)`;
+        let textmove = `translateX(${-(xtranvalue+100)}px) translateY(${-(ytranvalue+100)}px)`
+        
+        document.querySelector("#background-image").style.transform = imagemove;
+        document.querySelector("#container").style.transform = textmove;
+    }
+
+})();
 checkTime()
 animateclock()
 setInterval(() => {
@@ -46,6 +67,18 @@ function animateclock(){
     
     timechange(formatTime(hours),formatTime(minutes))
     
+}
+document.addEventListener("mousemove", parallax);
+
+function parallax(e){
+    this.querySelectorAll('.layer').forEach(layer => {
+        const speed = layer.getAttribute('data-speed')
+
+        const x = (window.innerWidth - e.pageX*speed)/100
+        const y = (window.innerHeight - e.pageY*speed)/100
+
+        layer.style.transform = `translateX(${x}px) translateY(${y}px)`
+    })
 }
 function formatTime(num){
     if(num >= 10){
