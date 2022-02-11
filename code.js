@@ -1,6 +1,6 @@
 let welcomes = ['Good afternoon,','Good morning,'];
 let username = 'Michael';
-
+let loadedImgs = []
 var nowTime = new Date();
 var lastbackgroundTime = new Date();
 let tick = false;
@@ -59,6 +59,9 @@ document.getElementById('background-image').onload = ()=> { //AAAAAAAAAAAAAAAAAA
     for(i = 2;i>=0;i--){
         ui[i].classList.add('ui-block'); // relic, this is beautiful. applys a second, higher priority class to another class
     };
+    let image = new Image()
+    image.src = photos[0]
+    loadedImgs.push(image)
 }
 function requestImages(query){
     request.open('GET','https://api.pexels.com/v1/search?' + query);
