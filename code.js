@@ -6,7 +6,13 @@ let welcomeData = {
         '6':'Happy Sunday,',
         '7':'Happy Saturday,'
     }
-} 
+}
+const userheight = window.innerHeight
+const userwidth = window.innerWidth
+// let bgDimensions = {width:0,height:0} // width and height is halfed because the use case combined with the math makes division later inefficient
+// taken out this section because it may or may not be implemented.
+// This will be used when I figure out if I want to zoom in the image or not.
+
 let username = 'Michael'; //Change this to your own name.
 let loadedImgs = []; 
 var nowTime = new Date();
