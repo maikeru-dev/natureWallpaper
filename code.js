@@ -25,7 +25,7 @@ function timeChange(hours,minutes){changeText('hours','hoursshadow', hours);chan
 
 let request = new XMLHttpRequest(); // variable constructor used for http requests for images
 
-requestImages('query=nature&orientation=landscape&size=medium'); // function details are below, query parameter allows for vertasity
+requestImages(); // function details are below, query parameter allows for vertasity
 
 setInterval(() => { // function repeats itself non-stop, every 1000ms
     animateClock()
@@ -60,19 +60,24 @@ function animateClock(){
 function loadBackground(){
     let data = photos.shift();
     console.log(photos)
+
     if (photos.length < 1){
-        requestImages('query=nature&orientation=landscape&size=medium') 
-        // we requested before but we use this to make sure we have more images to use
+        requestImages() 
+        // we've requested images before but we use this to make sure we have more to use in the future
+        // I plan to make the selection more advanced in the future, like time based wallpaper :)
     };
 
-    let imageUrl = data.src.original; //api path
+    // bgDimensions.height = data.height*(userheight/userwidth+0.2)/2 // this is used later to center the image
+    // bgDimensions.width = data.width*(userheight/userwidth+0.2)/2 
 
-    document.getElementById('background-image').src = imageUrl; //unique, doesn't need a function
+    document.getElementById('background-image').src = data.src.original; //api path for image
+ 
+
     changeText('credit','creditshadow',data.photographer); // applying the credit <3
     
 }
 document.getElementById('background-image').onload = ()=> { 
-    // This property function is why we use <img>, very useful
+    // This property function is the reason we use <img>, it is very useful
 
     let ui = document.getElementsByClassName('ui') // short hand
 
@@ -88,9 +93,11 @@ document.getElementById('background-image').onload = ()=> {
     loadedImgs.push(image)
     // Loading the future image, for the future.
 }
-
-function requestImages(query){
-    request.open('GET','https://api.pexels.com/v1/search?' + query);
+function requestImages(){ // working on the apporiate query! 
+                          // previously: 'query=nature&orientation=landscape&size=medium'
+    let random = Math.floor(Math.random() * 14) + 1
+    console.log('random num generated ', random)
+    request.open('GET','https://api.pexels.com/v1/search?' + 'query=desktop backgrounds nature&orientation=landscape&size=small&page=' + random);
     request.setRequestHeader('Authorization', apikey);
     request.send();
     request.onload = ()=>{
@@ -106,8 +113,8 @@ function requestImages(query){
     
     // Magic happens here, kudos to this guy https://codepen.io/oscicen/pen/zyJeJw
     function parallax(e) {
-        let _w = window.innerWidth / 2;
-        let _h = window.innerHeight / 2;
+        let _w = userwidth / 2;
+        let _h = userheight / 2;
         let _mouseX = e.clientX;
         let _mouseY = e.clientY;
 
