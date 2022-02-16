@@ -1,10 +1,11 @@
+
 let welcomeData = {
     'greetings':['Good night,','Good morning,','Good afternoon,','Good evening,','Good night,'],
     // each index is that equilvent to the time of day divided by 6 to give the accuracy, it's complex and works.
     'happyday':{
         '5':'Happy Friday,', // the numbers represent the day of the week
-        '6':'Happy Sunday,',
-        '7':'Happy Saturday,'
+        '6':'Happy Saturday,',
+        '7':'Happy Sunday,'
     }
 }
 const userheight = window.innerHeight
@@ -19,8 +20,8 @@ var nowTime = new Date();
 var lastbackgroundTime = new Date();
 let tick = false; // variable used for the semicolon in the clock
 let photos = []; // variable used to load images
-let apikey = "Bearer 563492ad6f917000010000011c2607a74b374f9f8daf3428ddc31151"; // api key, please don't steal it
-
+let apikey = {'pexel':"Bearer 563492ad6f917000010000011c2607a74b374f9f8daf3428ddc31151",
+                'openweather':'7675722a8276f3816b62ae9d8cd4146e' }; // api keys, please don't steal them
 
 function changeStyle(id, attribute, text){document.getElementById(id).style[attribute] = text };
 function changeText(id1, shadowid, text){document.getElementById(id1).innerText = text;document.getElementById(shadowid).innerText = text;}
@@ -29,9 +30,11 @@ function timeChange(hours,minutes){changeText('hours','hoursshadow', hours);chan
 // functions to prevent repeatitive code
 
 
-let request = new XMLHttpRequest(); // variable constructor used for http requests for images
+let request = new XMLHttpRequest(); // variable constructor used for http requests for images, fetch is probably better
 
-requestImages(); // function details are below, query parameter allows for vertasity
+requestImages() // requesting images and user location for openweatherdata, fetch is probably better
+requestUserLoc() // this isn't a web request, rather built in api with privacy considered!
+
 
 setInterval(() => { // function repeats itself non-stop, every 1000ms
     animateClock()
@@ -44,10 +47,11 @@ setInterval(() => { // function repeats itself non-stop, every 1000ms
 
 }, 1000); 
 
-
 function animateClock(){
     if(tick == false){
-        semicolonChange('visible');
+        semicolonChange('visible'); // there's a better way of setting multiple innerHtmls', use a class combined with
+                                    // the new technique you learned earlier, it's at 'onLoad' event for bg-image
+                                    // <3
         tick = true;
     }else {
         semicolonChange('hidden');
@@ -99,12 +103,13 @@ document.getElementById('background-image').onload = ()=> {
     loadedImgs.push(image)
     // Loading the future image, for the future.
 }
+
 function requestImages(){ // working on the apporiate query! 
                           // previously: 'query=nature&orientation=landscape&size=medium'
     let random = Math.floor(Math.random() * 14) + 1
-    console.log('random num generated ', random)
+    console.log('random num generated ', random) // query is always the same but the page selected should be different
     request.open('GET','https://api.pexels.com/v1/search?' + 'query=desktop backgrounds nature&orientation=landscape&size=small&page=' + random);
-    request.setRequestHeader('Authorization', apikey);
+    request.setRequestHeader('Authorization', apikey.pexel);
     request.send();
     request.onload = ()=>{
         photos = JSON.parse(request.response).photos;
@@ -113,7 +118,41 @@ function requestImages(){ // working on the apporiate query!
 }
 
 
-(function () { // sadly I don't know why but this code doesn't work outside of (function()...
+function requestUserLoc(){ // https://www.w3schools.com/js/js_api_geolocation.asp
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position)=>{
+            fetch("https://api.openweathermap.org/data/2.5/weather?lat="+ position.coords.latitude + "&lon="+ position.coords.longitude +"&appid=" + apikey.openweather).then(
+                (response) => {
+                    (response).json().then(jsonResponse =>{
+
+                        console.log(jsonResponse)
+
+                        let weatherinfo = document.getElementsByClassName('weatherinfo')
+                        const desc = jsonResponse.weather[0].description.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));
+                        // >> https://www.digitalocean.com/community/tutorials/js-capitalizing-strings
+                        // this is required because for whatever reason lower case is classy and the main name is undescriptive (:
+
+                        let icon = new Image(150,150)
+                            icon.style.position = 'absolute'
+                            icon.style.marginTop = '-40px'
+                            icon.src = 'https://openweathermap.org/img/wn/'+ jsonResponse.weather[0].icon +'@4x.png'
+
+                        weatherinfo[0].innerHTML = desc
+                        weatherinfo[1].innerHTML = desc    
+                        weatherinfo[0].appendChild(icon)
+
+                    })
+                    // sys.sunrise ideas, change background theme!!
+                    // weather.main, weather.icon
+                }
+            )
+        });
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+};
+
+(function () { // sadly I don't know why but this code doesn't work outside of (function()...)
     // Add event listener
     document.addEventListener("mousemove", parallax);
     

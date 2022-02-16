@@ -7,7 +7,7 @@
     overflow-y:hidden;
     text-shadow: 40px;
     z-index:50;
-    color:rgba(255, 255, 255, 0.644);
+    color:rgba(255, 255, 255, 0.753);
 }
 
 #credit {
@@ -50,14 +50,25 @@
     z-index:1;
     right:inherit;
 }
-#weatherinfo {
+.weatherinfo {
+    margin: 75px 0 0 25px;
+    position: absolute; 
     transform: skewY(2deg);
-    animation: 0.8s ease-out 0s 1 slideinTop;
-    position: absolute;
+    font-size:45px;
+    z-index:20;
+    opacity:0;
+    animation: 0.8s ease-out 2.5s 1 slideinTop;
+    animation-fill-mode:forwards;
+}
+#weatherinfo {
+    opacity:0;
+    animation: 0.8s ease-out 2.5s 1 slideinTop;
+    animation-fill-mode:forwards;
+    color:rgba(255, 255, 255, 0.753);
 }
 .clock {
     transform: skewY(-2deg);
-    color:rgba(255, 255, 255, 0.582);
+    color:rgba(255, 255, 255, 0.753);
     right:0;
     opacity:0;
     overflow:visible;
